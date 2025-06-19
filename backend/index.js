@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 require("dotenv").config();
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const path = require("path");
 
 dotenv.config();
 
@@ -17,10 +18,28 @@ app.use(express.json());
 const geminiRoutes = require("./routes/gemini");
 app.use("/api", geminiRoutes);
 
+const realEstateRoutes= require("./routes/realEstate");
+app.use("/api2", realEstateRoutes);
+
+// app.use(express.static(path.join(__dirname, "public")));
+// app.use("/videos", express.static(path.join(__dirname, "public/videos")));
+
+app.use("/videos", express.static(path.join(__dirname, "public/videos"), {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res, path) => {
+    res.setHeader("Cache-Control", "no-store");
+  },
+}));
+
 // Default
 app.get("/", (req, res) => {
   res.send("✅ Backend is up and running!");
 });
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "public", "index.html"));
+// });
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
