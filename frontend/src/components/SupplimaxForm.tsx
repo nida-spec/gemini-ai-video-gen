@@ -25,7 +25,7 @@ export default function SuplimaxForm() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/generate-marketing-video`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/generate-marketing-video`,
 
         {
           method: "POST",
