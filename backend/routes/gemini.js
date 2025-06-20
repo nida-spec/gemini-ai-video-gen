@@ -194,7 +194,7 @@ router.post("/generate-marketing-video", async (req, res) => {
     });
     console.log("Script:\n", script);
     console.log("Image URL:\n", suplimaxImageUrl);
-    console.log("Video URL:\n", videoUrl);
+    console.log("Video URL:\n", 'https://gemini-ai-video-gen-backend.onrender.com/videos/raw-1750386719251.mp4');
 
     res.json({ script, imageUrl: suplimaxImageUrl, videoUrl });
   } catch (err) {

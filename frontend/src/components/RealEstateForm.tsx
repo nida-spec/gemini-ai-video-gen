@@ -15,7 +15,7 @@ export default function RealEstateForm() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api2/generate-realestate-video`,
+        `${import.meta.env.VITE_API_BASE_URL}api2/generate-realestate-video`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
