@@ -14,7 +14,7 @@ const VideoPlayer: React.FC<Props> = ({ videoUrl }) => {
       <a
         href={videoUrl}
         download
-        className="inline-block mt-4 text-white bg-green-600 px-4 py-2 rounded"
+        className="inline-block mt-4 text-white bg-gray-600 px-4 py-2 rounded"
       >
         Download Video
       </a>

@@ -25,7 +25,7 @@ router.post("/generate-realestate-video", async (req, res) => {
 module.exports = router;
 
 async function generateVideoWithVeo(script) {
-  const PROJECT_ID = process.env.GCP_PROJECT_ID; 
+  const PROJECT_ID = process.env.GCP_PROJECT_ID;
   const LOCATION = process.env.GCP_LOCATION || "us-central1";
   const MODEL_ID = "veo-2.0-generate-001";
   const API_ENDPOINT = `${LOCATION}-aiplatform.googleapis.com`;
@@ -106,7 +106,6 @@ async function generateVideoWithVeo(script) {
     const timestamp = Date.now();
     const videoDir = path.join(__dirname, "../public/videos");
     const inputPath = path.join(videoDir, `raw-${timestamp}.mp4`);
-    const outputPath = path.join(videoDir, `video-${timestamp}.mp4`);
 
     // Step 3: Decode and save the video
     const videoBase64 = result.response.videos[0].bytesBase64Encoded;

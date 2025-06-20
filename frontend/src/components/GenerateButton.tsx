@@ -10,7 +10,7 @@ export default function GenerateButton({ onClick, loading }: Props) {
       disabled={loading}
       className="bg-blue-600 text-white px-4 py-2 rounded mt-4"
     >
-      {loading ? "Generating..." : "Generate Video"}
+      {loading ? "Generating... Please do not refresh.." : "Generate Video"}
     </button>
   );
 }
