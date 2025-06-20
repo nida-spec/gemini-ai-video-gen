@@ -112,7 +112,7 @@ async function generateVideoWithVeo(script) {
 
     saveBase64Video(videoBase64, inputPath);
 
-    return `/videos/raw-${timestamp}.mp4`;
+    return `https://gemini-ai-video-gen-backend.onrender.com/videos/raw-${timestamp}.mp4`;
   } catch (err) {
     console.error("❌ Failed to generate video with Veo:", err.message);
     return null;
