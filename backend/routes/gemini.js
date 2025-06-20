@@ -29,13 +29,8 @@ Keep it dynamic and punchy.
 
 // STEP 2: Generate energy drink image
 async function generateSuplimaxImage(prompt) {
-  const PROJECT_ID = "amazing-folio-463417-v6";
-  const LOCATION_ID = "us-central1";
-  const MODEL_ID = "imagen-4.0-generate-preview-05-20";
-  const API_ENDPOINT = "us-central1-aiplatform.googleapis.com";
-
   const requestPayload = {
-    endpoint: `projects/${PROJECT_ID}/locations/${LOCATION_ID}/publishers/google/models/${MODEL_ID}`,
+    endpoint: `projects/${process.env.GCP_PROJECT_ID}/locations/${process.env.GCP_LOCATION}/publishers/google/models/${process.env.MODEL_ID_IMAGE}`,
     instances: [{ prompt }],
     parameters: {
       aspectRatio: "16:9",
@@ -49,7 +44,7 @@ async function generateSuplimaxImage(prompt) {
 
   try {
     const accessToken = process.env.GOOGLE_OAUTH_TOKEN; // From service account or gcloud
-    const apiURL = `https://${API_ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${LOCATION_ID}/publishers/google/models/${MODEL_ID}:predict`;
+    const apiURL = `https://${process.env.API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/locations/${process.env.GCP_LOCATION}/publishers/google/models/${process.env.MODEL_ID_IMAGE}:predict`;
     const response = await axios.post(apiURL, requestPayload, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -81,11 +76,6 @@ async function generateSuplimaxImage(prompt) {
   }
 }
 
-const PROJECT_ID = process.env.GCP_PROJECT_ID;
-const LOCATION = process.env.GCP_LOCATION || "us-central1";
-const MODEL_ID = "veo-2.0-generate-001";
-const API_ENDPOINT = `${LOCATION}-aiplatform.googleapis.com`;
-
 // NOTE: This requires a valid OAuth 2.0 access token, not API key
 // STEP 3: Generate video using veo based on generated image and prompt
 async function generateVideoWithVeo({ script, base64 }) {
@@ -94,9 +84,9 @@ async function generateVideoWithVeo({ script, base64 }) {
 
     // Step 1: Request video generation
     const startResponse = await axios.post(
-      `https://${API_ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}:predictLongRunning`,
+      `https://${process.env.API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/locations/${process.env.GCP_LOCATION}/publishers/google/models/${process.env.MODEL_ID_VIDEO}:predictLongRunning`,
       {
-        endpoint: `projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}`,
+        endpoint: `projects/${process.env.GCP_PROJECT_ID}/locations/${process.env.GCP_LOCATION}/publishers/google/models/${process.env.MODEL_ID_VIDEO}`,
         instances: [
           {
             prompt: script,
@@ -128,7 +118,7 @@ async function generateVideoWithVeo({ script, base64 }) {
 
     // Step 2: Poll until done
     let result = null;
-    const pollUrl = `https://${API_ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}:fetchPredictOperation`;
+    const pollUrl = `https://${process.env.API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/locations/${process.env.GCP_LOCATION}/publishers/google/models/${process.env.MODEL_ID_VIDEO}:fetchPredictOperation`;
 
     const maxAttempts = 12;
     let attempt = 0;
