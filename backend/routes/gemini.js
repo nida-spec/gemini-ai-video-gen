@@ -2,18 +2,8 @@ const express = require("express");
 const axios = require("axios");
 const { v2: cloudinary } = require("cloudinary");
 require("dotenv").config();
-
-const { createWriteStream, existsSync, mkdirSync } = require("fs");
 const path = require("path");
-const fetch = require("node-fetch");
-const { Readable } = require("stream");
-const { GoogleGenAI } = require("@google/genai");
-const { pipeline } = require("stream");
-const { promisify } = require("util");
-const pipe = promisify(pipeline);
 const fs = require("fs");
-const ffmpeg = require("fluent-ffmpeg");
-
 const router = express.Router();
 
 cloudinary.config({
@@ -25,7 +15,7 @@ cloudinary.config({
 const USE_VEO = process.env.USE_VEO === "true";
 
 // STEP 1: Build script prompt
-function buildScriptPrompt({ features, tone, audience, style }) {
+async function buildScriptPrompt({ features, tone, audience, style }) {
   return `
 Create a 5-second promotional video script for an energy drink called "Suplimax".
 - Product Features: ${features.join(", ")}
@@ -37,7 +27,7 @@ Keep it dynamic and punchy.
   `;
 }
 
-// POST /generate-image-- newwww
+// STEP 2: Generate energy drink image
 async function generateSuplimaxImage(prompt) {
   const PROJECT_ID = "amazing-folio-463417-v6";
   const LOCATION_ID = "us-central1";
@@ -59,9 +49,7 @@ async function generateSuplimaxImage(prompt) {
 
   try {
     const accessToken = process.env.GOOGLE_OAUTH_TOKEN; // From service account or gcloud
-
     const apiURL = `https://${API_ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${LOCATION_ID}/publishers/google/models/${MODEL_ID}:predict`;
-
     const response = await axios.post(apiURL, requestPayload, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -92,59 +80,14 @@ async function generateSuplimaxImage(prompt) {
     throw err;
   }
 }
-// STEP 2: Generate product image with Gemini (image model)
-async function generateSuplimaxImagde() {
-  const imagePrompt =
-    'can you create me an AI image of an energy drink labelled with the word: "Suplimax" clearly visible';
-  const imageRes = await axios.post(
-    "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
-    {
-      contents: [
-        {
-          parts: [
-            {
-              text: imagePrompt,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      params: {
-        key: process.env.GEMINI_API_KEY,
-      },
-    }
-  );
 
-  const base64Image =
-    imageRes.data.candidates[0].content.parts[0].inline_data.data;
-  const imageBuffer = Buffer.from(base64Image, "base64");
-
-  const result = await cloudinary.uploader.upload(
-    `data:image/png;base64,${base64Image}`,
-    {
-      folder: "suplimax",
-      public_id: "ai-generated",
-      overwrite: true,
-    }
-  );
-
-  return result.secure_url;
-}
-
-// STEP 3: Generate script with Gemini
-async function generateScript(prompt) {
-  return prompt;
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-const PROJECT_ID = process.env.GCP_PROJECT_ID; // e.g. "amazing-folio-463417-v6"
+const PROJECT_ID = process.env.GCP_PROJECT_ID;
 const LOCATION = process.env.GCP_LOCATION || "us-central1";
 const MODEL_ID = "veo-2.0-generate-001";
 const API_ENDPOINT = `${LOCATION}-aiplatform.googleapis.com`;
 
 // NOTE: This requires a valid OAuth 2.0 access token, not API key
+// STEP 3: Generate video using veo based on generated image and prompt
 async function generateVideoWithVeo({ script, base64 }) {
   try {
     const accessToken = process.env.GOOGLE_OAUTH_TOKEN; // From service account or gcloud
@@ -228,11 +171,7 @@ async function generateVideoWithVeo({ script, base64 }) {
 
     // Step 3: Decode and save the video
     const videoBase64 = result.response.videos[0].bytesBase64Encoded;
-
     saveBase64Video(videoBase64, inputPath);
-
-    await convertToCompatibleMp4(inputPath, outputPath);
-
     console.log("🎉 Final video ready at:", outputPath);
     return `/videos/raw-${timestamp}.mp4`;
   } catch (err) {
@@ -241,7 +180,7 @@ async function generateVideoWithVeo({ script, base64 }) {
   }
 }
 
-// Step 1: Save base64 to MP4
+// Step 4: Save base64 to MP4
 function saveBase64Video(base64String, outputPath) {
   const cleanBase64 = base64String.replace(/^data:video\/mp4;base64,/, "");
   const buffer = Buffer.from(cleanBase64, "base64");
@@ -249,34 +188,11 @@ function saveBase64Video(base64String, outputPath) {
   console.log(`✅ Raw base64 video saved to: ${outputPath}`);
 }
 
-// Step 2: Convert to compatible H.264 MP4
-function convertToCompatibleMp4(inputPath, outputPath) {
-  return new Promise((resolve, reject) => {
-    ffmpeg(inputPath)
-      .videoCodec("libx264")
-      .outputOptions(["-profile:v baseline", "-level 3.0", "-pix_fmt yuv420p"])
-      .on("end", () => {
-        console.log(`✅ FFmpeg conversion done: ${outputPath}`);
-        resolve(outputPath);
-      })
-      .on("error", (err) => {
-        console.error("❌ FFmpeg error:", err);
-        reject(err);
-      })
-      .save(outputPath);
-  });
-}
-
 // MAIN ROUTE
 router.post("/generate-marketing-video", async (req, res) => {
   try {
     const { features, tone, audience, style } = req.body;
-
-    const prompt = buildScriptPrompt({ features, tone, audience, style });
-    const script = await generateScript(prompt);
-
-    // const suplimaxImageUrl = await generateSuplimaxImage();
-    // const suplimaxImageUrl = "DUMMY";
+    const script = await buildScriptPrompt({ features, tone, audience, style });
     const imagePrompt =
       "can you create me an AI image of an energy drink labelled with the word: 'Suplimax' clearly visible";
     const { imageUrl: suplimaxImageUrl, base64: base64image } =
@@ -286,7 +202,6 @@ router.post("/generate-marketing-video", async (req, res) => {
       script,
       base64: base64image,
     });
-    console.log("Prompt:\n", prompt);
     console.log("Script:\n", script);
     console.log("Image URL:\n", suplimaxImageUrl);
     console.log("Video URL:\n", videoUrl);
