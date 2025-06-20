@@ -11,26 +11,37 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // local dev
+      "https://chipper-lamington-91e93f.netlify.app", // your Netlify frontend
+    ],
+    credentials: true, // if you're using cookies or auth headers
+  })
+);
 app.use(express.json());
 
 // Routes
 const geminiRoutes = require("./routes/gemini");
 app.use("/api", geminiRoutes);
 
-const realEstateRoutes= require("./routes/realEstate");
+const realEstateRoutes = require("./routes/realEstate");
 app.use("/api2", realEstateRoutes);
 
 // app.use(express.static(path.join(__dirname, "public")));
 // app.use("/videos", express.static(path.join(__dirname, "public/videos")));
 
-app.use("/videos", express.static(path.join(__dirname, "public/videos"), {
-  etag: false,
-  lastModified: false,
-  setHeaders: (res, path) => {
-    res.setHeader("Cache-Control", "no-store");
-  },
-}));
+app.use(
+  "/videos",
+  express.static(path.join(__dirname, "public/videos"), {
+    etag: false,
+    lastModified: false,
+    setHeaders: (res, path) => {
+      res.setHeader("Cache-Control", "no-store");
+    },
+  })
+);
 
 // Default
 app.get("/", (req, res) => {
