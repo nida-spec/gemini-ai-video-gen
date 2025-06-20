@@ -42,20 +42,29 @@ npm install
 🔐 Environment Variables
 Create a .env file in /backend:
 PORT=3000
+
 USE_VEO=true
 
 # Cloudinary
 CLOUD_NAME=your_cloudinary_name
+
 CLOUD_API_KEY=your_cloudinary_api_key
+
 CLOUD_API_SECRET=your_cloudinary_api_secret
 
 # Google AI Platform (Gemini / Veo)
 GCP_PROJECT_ID=your_project_id
+
 GCP_LOCATION=us-central1
+
 API_ENDPOINT=us-central1-aiplatform.googleapis.com
+
 MODEL_ID_IMAGE=imagen-1
+
 MODEL_ID_VIDEO=veo-1
+
 GOOGLE_OAUTH_TOKEN=your_oauth_access_token
+
 🔑 Use a valid OAuth 2.0 access token with permissions to use Gemini and Veo APIs.
 
 ▶️ Running the App Locally
@@ -70,7 +79,11 @@ npm run dev
 Open your browser at http://localhost:5173
 
 
+
+
+
 🌐 Deployment
+
 Backend (Render)
 Deploy /backend folder as a Web Service on Render
 
