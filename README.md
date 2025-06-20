@@ -12,6 +12,7 @@ Node.js + Express (Backend)
 React + Vite + TypeScript + Tailwind (Frontend)
 
 🚀 Features
+
 ✨ Prompt-based marketing script generation
 
 🎨 AI-generated product image using Google Gemini
@@ -24,31 +25,22 @@ React + Vite + TypeScript + Tailwind (Frontend)
 
 📦 Installation
 1. Clone the repository
-bash
-Copy
-Edit
+
 git clone https://github.com/nida-spec/gemini-ai-video-gen.git
 cd gemini-ai-video-gen
-2. Install dependencies
-Frontend
 
-bash
-Copy
-Edit
+2. Install dependencies
+Frontend:
 cd frontend
 npm install
-Backend
 
-bash
-Copy
-Edit
+
+Backend:
 cd backend
 npm install
+
 🔐 Environment Variables
 Create a .env file in /backend:
-env
-Copy
-Edit
 PORT=3000
 USE_VEO=true
 
@@ -68,35 +60,16 @@ GOOGLE_OAUTH_TOKEN=your_oauth_access_token
 
 ▶️ Running the App Locally
 1. Start Backend
-bash
-Copy
-Edit
 cd backend
 node index.js
-2. Start Frontend
-bash
-Copy
-Edit
+
+
+3. Start Frontend
 cd frontend
 npm run dev
 Open your browser at http://localhost:5173
 
-📁 Project Structure
-bash
-Copy
-Edit
-gemini-ai-video-gen/
-│
-├── backend/
-│   ├── routes/gemini.js        # Image + video generation logic
-│   ├── public/videos/          # Generated video storage
-│   └── index.js                # Express server
-│
-├── frontend/
-│   ├── components/             # SuplimaxForm + VideoPlayer
-│   └── main.tsx / App.tsx      # React app setup
-│
-└── README.md
+
 🌐 Deployment
 Backend (Render)
 Deploy /backend folder as a Web Service on Render
@@ -104,11 +77,9 @@ Deploy /backend folder as a Web Service on Render
 Enable static files for /public/videos
 
 Use the full backend URL in your frontend’s .env:
-
-env
-Copy
-Edit
 VITE_API_BASE_URL= https://gemini-ai-video-gen-backend.onrender.com/
+
+
 🧪 Sample Prompt
 "High caffeine, zero sugar, tropical flavor"
 
@@ -128,17 +99,19 @@ Video with motion, text, and image
 Add screenshots here showing:
 
 The form
+
 ![image](https://github.com/user-attachments/assets/c433579c-cbb0-4072-baf4-093f5d3d6e7f)
 
 The generated image and script
+
 ![image](https://github.com/user-attachments/assets/66eecedd-2259-4160-8ad9-df0e6132b003)
 
 The video playback
+
 ![image](https://github.com/user-attachments/assets/3b636f4e-9f15-4c2b-a5a3-55264aa76471)
 
 
 🛠️ TODOs / Improvements
- -Add download button for video
 
  -Add loading spinners for each stage (image, script, video)
 
@@ -148,3 +121,4 @@ The video playback
 
  -Use a Google Service Account to Generate and Refresh the Access Token in Code
 
+-Use local storage for prompt in case a user presses Refresh while generating video 
