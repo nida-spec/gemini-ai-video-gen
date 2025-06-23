@@ -97,8 +97,11 @@ VITE_API_BASE_URL= https://gemini-ai-video-gen-backend.onrender.com/
 "High caffeine, zero sugar, tropical flavor"
 
 Tone: Excited
+
 Audience: Teenagers
+
 Style: Animated
+
 
 Result:
 
@@ -109,7 +112,7 @@ Script: “Fuel your day with Suplimax — a burst of tropical energy with zero 
 Video with motion, text, and image
 
 📸 Screenshots
-Add screenshots here showing:
+
 
 The form
 
